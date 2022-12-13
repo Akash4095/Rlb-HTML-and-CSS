@@ -1,0 +1,1 @@
+.home a{ font-size: 18px; font-weight: 800; color: #2c3e50; } .body{ margin-left: 20px; font-size: 16px; font-weight: 600; /*color: #2980b9;*/ color:#2136cc; } .chest a{ margin-left: 50px; font-size: 14px; font-weight: 400; color: #3498db; } .chest i{ position: relative; left: 50px; } a:hover{ text-decoration: underline!important; }

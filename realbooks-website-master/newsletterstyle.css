@@ -1,0 +1,183 @@
+﻿* {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+
+.container-newsletter{
+		margin:0px auto;
+		width:900px;
+	}
+
+
+.newsletterContent p {
+    margin: 0;
+    min-height: 100px;
+    width:850px;
+    padding-left:30px;
+    padding-top:10px;
+}
+
+
+.tipofthemonth {   float: left;
+  width: 400px;
+  margin-bottom: 15px;
+  padding: 0 8px;
+  text-align:center;
+}
+
+.tipofthemonth .bgimage {
+    background-image:url('image-newsletter/tipofmonth-bg.jpg');
+    background-repeat:no-repeat;
+    width:400x;
+    height:389px;
+    float:left;
+    margin:20px 25px 15px 20px;
+    
+}
+
+
+.tipofthemonth .head {
+ width:255px;
+  font-weight:bold;
+  line-height: 30px;
+  font-size:23px;
+  padding-top: 58px;
+  padding-left:120px;
+    color: white;
+  text-align: center;
+  font-style:italic;
+}
+
+.tipofthemonth .contentnews {
+text-align:center;
+width:323px;
+  font-weight:bold;
+  line-height: 30px;
+  font-size:20px;
+  padding-left:30px;
+  text-align: center;
+  padding-top:50px;
+  font-style:italic;
+}
+
+
+
+.whatsnew {float: left;
+  width: 400px;
+  margin-bottom: 15px;
+  padding: 0 8px;
+  text-align:center;
+}
+
+.whatsnew .bgimage {
+   background-image:url('image-newsletter/whatsnew-bg.jpg');
+    background-repeat:no-repeat;
+    width:400x;
+    height:389px;
+    float:left;
+    margin: 20px 0px 15px 35px;
+}
+
+.whatsnew .head{
+width:125px;
+  font-weight:bold;
+  line-height: 30px;
+  font-size:23px;
+  padding-top: 48px;
+  padding-left:153px;
+    color: white;
+  text-align: center;
+  font-style:italic;
+}
+
+.whatsnew .contentnews {
+text-align:center;
+width:320px;
+  font-weight:bold;
+  line-height: 30px;
+  font-size:20px;
+  padding-top: 10px;
+  padding-left:50px;
+  text-align: center;
+  font-style:italic;
+}
+
+
+.calender{
+	width:480px; float:left;
+	padding-right:20px;
+}
+
+
+ul{
+list-style:none;
+padding:10px;
+	
+}
+
+ul li.calender{
+	border-bottom: 1px dashed #ddd; 
+	padding:8px;
+}
+
+
+
+
+table, td {
+width:870px;
+  border: 3px solid #1f75c2;
+  border-collapse: collapse;
+  margin:18px;
+  
+}
+
+table, td .gst {
+width:870px;
+  margin:18px;
+  
+}
+
+
+.casestudy{
+	text-align:center;
+	background-color:#1f75c2;
+	font-size:28px;
+	color:white;
+	padding:10px;
+	font-weight:bold;
+	width:250px;
+   display: block;
+   margin-left: 300px;
+   margin-right: auto;
+   margin-top:600px;
+}
+
+.newsletterfooter {
+margin:auto;
+float:left;
+  width: 900px;
+  text-align:left;
+}
+
+.newsletterfooter .bgimage {
+    background-image:url('image-newsletter/newsletter-footer.png');
+    background-repeat:no-repeat;
+    width:900x;
+    height:84px;
+}
+
+
+.newsletterfooter .content {
+color:white;
+width:500px;
+  font-weight:bold;
+  font-size:14px;
+  padding-top: 60px;
+  padding-left:20px;
+}
+
+
+
+

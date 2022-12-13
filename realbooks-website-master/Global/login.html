@@ -1,0 +1,459 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>Login</title> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>  
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300">
+        <script type="text/javascript">
+            $(function(){
+		$("#domain").focus();
+                $(".forgotPass").click(function(){
+                    top.window.location.href = "https://test.realbooks.in/AMS-war/Std_ForgotPw.jsp";
+                });
+                //localStorage.clear();
+                var savedLogin =  JSON.parse(localStorage.getItem('savedLogin')) 
+                //console.log("savedLogin=="+JSON.stringify(savedLogin));
+                if(savedLogin!="" && savedLogin!=null && savedLogin!=undefined){
+                    $("#domain").val(savedLogin.domain);
+                    $("#uname").val(savedLogin.username);
+                    $("#password").val(savedLogin.password);
+                    $("#remember_me").attr("checked","checked");
+                }
+		$("#password").on("keydown",function(e){
+			if(e.keyCode == 13){
+				e.preventDefault();
+				$("#buttonSave").click();
+			}
+		});
+		$("#captchaInput").on("keydown",function(e){
+			if(e.keyCode == 13){
+				e.preventDefault();
+				$("#buttonSave").click();
+			}
+		});
+            });
+            function submitlogin(){
+                var validateCaptchaStat = true;
+                if($("#catchaTable:visible").length>0){
+                    validateCaptchaStat = false;
+                    validateCaptchaStat = validateCaptcha();
+                    //alert(validateCaptchaStat);
+                    if(validateCaptchaStat){
+                        $("#captcha_Validated").val("yes");
+                        if($("#buttonSave").attr("value") == "Invalidate User"){
+                            $("#manualInvalidate").val("yes");
+                        }
+                    }		
+                }
+                if(validateCaptchaStat){
+                    var data = $("#login").serialize();
+                    $(".verifyCode").html("");
+                    //alert(data)
+			$("#buttonSave").css({
+		            "opacity":0.4
+		        }).attr("disabled","disabled");
+                    $.ajax({
+                        url:"https://test.realbooks.in/AMS-war/Std_Web_Login",
+                        type:"POST",
+                        data: data,
+                        dataType: "JSON",
+                        success:function(res){
+                            //console.log(res);
+                            $("#error_msg_login").html(res.message);
+                            if(res.type == "error_login_cnt_exceed" || res.type=="error_already_login"){
+                                $("#catchaTable").show();
+                                generateCaptcha();
+                            }else if(res.type == "success_company"){
+                                $("#error_msg_login").html("");
+                                $("#buttonSave").attr("disbaled","disbaled")
+                                if($("#remember_me").is(":checked")){
+                                    var savedLogin = {
+                                        "username":res.user,
+                                        "password":$("#password").val(),
+                                        "domain":res.domain
+                                    }
+                                    localStorage.setItem("savedLogin", JSON.stringify(savedLogin));
+                                }else{
+                                    localStorage.clear();	
+                                }
+				
+                                $("#username").val(res.user);
+                                $("#usrEmail").val(res.userEmail);
+                                $("#recdomain").val(res.domain);
+                                $("#from_web").val("from_web");
+                                $("#webUrl").val(res.webUrl);
+                                $("#compSelectionForm").submit();
+                            }
+                            if(res.type=="error_already_login"){
+                                $("#buttonSave").attr("value","Invalidate User");
+                            }else{
+                                $("#buttonSave").attr("value","Login");
+					
+                            }
+				$("#buttonSave").css({
+				    "opacity":1
+				}).removeAttr("disabled");
+                        }
+                    });
+                }
+            }
+            var finalCaptchaString = "";
+            var generateCaptcha = function(){
+                var chars = "0A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z",
+                string_length = 6,
+                captchastring = "",
+                captchaImg = "";
+                for (var i=0; i<string_length; i++) {
+                    var rnum = Math.floor(Math.random() * chars.length);
+                    captchastring += chars.substring(rnum, rnum+1);
+                    var charc = captchastring.charAt(i);
+                    captchaImg = captchaImg + "<img src='https://s3-ap-southeast-1.amazonaws.com/realbooksimage/captcha_fonts/"+charc+".png' style='top: 2px;position:relative;' />"
+                }
+                $(".captcha").html(captchaImg);  
+                finalCaptchaString = captchastring;
+            };
+
+            var validateCaptcha = function(){
+                var enteredStr = $.trim($("#captchaInput").val());
+                if(enteredStr==""){
+                    $(".verifyCode").html("<span class='errorClass'>Please enter the shown text</span>");
+                    $("#captchaInput").val("").focus();
+                    return false;
+                }else if(finalCaptchaString == enteredStr){
+                    $("#captchaInput").val("");
+                    return true;
+                }else{
+                    $(".verifyCode").html("<span class='errorClass'>Does not match with the shown text</span>");
+                    $(".refreshCaptcha").trigger("click");
+                    $("#captchaInput").val("").focus();                        
+                    return false;
+                }
+            };
+	    $(document).on("click",".refreshCaptcha",function(){
+		generateCaptcha();
+		});
+            function joinusClick(){
+                top.window.location.href = "https://test.realbooks.in/AMS-war/userSettings/newcomp/template/Rlb_NewCompany_Create.jsp";
+            }
+        </script>
+        <style>
+/*@font-face {
+                font-family: 'Open Sans';
+                font-style: normal;
+                font-weight: 300;
+                src: local('Open Sans Light'), local('OpenSans-Light'), url(fonts/webfonts/open_Sans_Light.woff2) format('woff2');
+                }*/
+            /***checkbox *******/
+            .container {
+                display: block;
+                position: relative;
+                padding-left: 35px;
+                margin-bottom: 3px;
+                cursor: pointer;
+                font-size: 22px;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+            /* Hide the browser's default checkbox */
+            .container input {
+                position: absolute;
+                opacity: 0;
+            }
+            .checkmark {
+                position: absolute;
+                left: 0;
+                height: 22px;
+                width: 22px;
+                background-color: #ccc;
+                border-radius: 4px;
+            }
+            /* On mouse-over, add a grey background color */
+            .container:hover input ~ .checkmark {
+                background-color: #ccc;
+            }
+
+            /* When the checkbox is checked, add a blue background */
+            .container input:checked ~ .checkmark {
+                background-color: #0070c3;
+            }
+
+            /* Create the checkmark/indicator (hidden when not checked) */
+            .checkmark:after {
+                content: "";
+                position: absolute;
+                display: none;
+            }
+
+            /* Show the checkmark when checked */
+            .container input:checked ~ .checkmark:after {
+                display: block;
+            }
+
+            /* Style the checkmark/indicator */
+            .container .checkmark:after {
+                height: 10px;
+                left: 8px;
+                top: 3px;
+                width: 4px;
+                border: solid white;
+                border-width: 0 3px 3px 0;
+                -webkit-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                transform: rotate(45deg);
+            }
+            #remember_me:focus + .checkmark{
+                box-shadow: 0 0 1px 1px #0070c3;
+            }
+            /***checkbox ends*******/
+            input[type=text]:not(.readonlyTextbox):focus,input[type=checkbox]:focus,
+            input[type=password]:focus{
+                box-shadow: 0 0 2px 0 #0070c3!important; /*#00b297*/
+                -webkit-box-shadow: 0 0 2px 0 #0070c3!important;
+                -moz-box-shadow: 0 0 0 2px 0 #0070c3!important;
+                -ms-box-shadow: 0 0 2px 0 #0070c3!important;
+                -o-box-shadow: 0 0 2px 0 #0070c3!important;
+                border: 1px solid #0070c3!important;
+                outline: none!important;
+
+            }
+            .fieldText{
+                color:#424242;
+                font-family:"Open Sans", helvetica, Arial, sans-serif;/* "proxima_novasemibold";*/
+                font-size: 16px;
+            }
+            .commonFieldLogin{
+                border: 1px solid #d5d5d5 !important;
+                display: block;
+                padding: 10px 6px;
+                width: 100%;
+                margin-bottom: 20px;
+		background:transparent;
+            }
+	.commonFieldLogin_captcha{
+		border: 1px solid #d5d5d5 !important;
+                display: block;
+                padding: 10px 6px;
+                width: 100%;
+		}
+            .logFieldTr{
+
+            }
+            .login{
+                background: #288feb none repeat scroll 0 0;
+                border: 0 none;
+                border-radius: 2px;
+                color: #fff;
+                cursor: pointer;
+                display: block;
+                font-size: 16px;
+                font-weight: 300;
+                padding: 10px;
+                transition: all 0.4s ease 0s;
+                width:100%;
+                margin: 0 auto;
+            }
+            .login:hover,.login:focus{
+                background:#288FEB;
+                border:#288FEB;
+            }
+            .login_btn_holder{
+                margin: 0 auto;
+                position: relative;
+                text-align: center;
+                width: 74%;
+            }
+            :focus {outline:none;}
+            ::-moz-focus-inner {border:0;}
+            .error_msg_login{
+                width:99%;
+                text-align:center;
+                font-family: inherit;
+                font-size: 13px;
+                margin-top: 19px;
+            }
+            .errorClass{
+                width:99%;
+                text-align:center;
+                font-family: inherit;
+                font-size: 13px;
+                color: #424242;
+            }
+            .captcha {
+                background: rgba(0, 0, 0, 0) url("https://s3-ap-southeast-1.amazonaws.com/realbooksimage/captcha_fonts/captcha_bg.png") repeat scroll 0 0;
+                display: inline-block;
+                height: 30px;
+                text-align: center;
+                width: 192px;
+            }
+            .refreshCaptcha {
+                border: 1px solid rgb(139, 127, 127);
+                border-radius: 5px;
+                display: inline-block;
+                padding: 3px;
+                position: relative;
+                top: 3px;
+                width: 19px;
+		cursor:pointer;
+            }
+            .verifyCode{
+                margin-top: 20px;
+		margin-bottom: 20px;
+            }
+            .accountIcon{
+                background: #fff url("https://s3-ap-southeast-1.amazonaws.com/realbooksimage/account.svg") no-repeat scroll left 4px center / 20px auto !important;
+                padding-left:30px;
+                padding-right: 6px;
+            }
+            .userIcon{
+                background: #fff url("https://s3-ap-southeast-1.amazonaws.com/realbooksimage/user.svg") no-repeat scroll left 4px center / 18px auto !important;
+                padding-left:30px;
+                padding-right: 6px;
+            }
+            .passwrdIcon{
+                background: #fff url("https://s3-ap-southeast-1.amazonaws.com/realbooksimage/password.svg") no-repeat scroll left 4px center / 23px auto !important;
+                padding-left:30px;
+                padding-right: 6px;
+                margin-bottom: 15px;
+            }
+		.viewcon {
+		    background: #fff url("https://s3-ap-southeast-1.amazonaws.com/realbooksimage/view.svg") no-repeat scroll left 7px center / 17px auto !important;
+		    padding-left: 30px;
+		    padding-right: 6px;
+		}
+            .forgotPass{
+                text-decoration: none;
+                cursor: pointer;
+                font-size: 12px;
+                color:#2810D0;
+            }
+            .forgotPass:hover,.forgotPass:focus{
+                color:#288feb;
+            }
+            .remText{
+                position:relative;
+            }
+             .maincontainer{	
+                font-family:  "Open Sans", helvetica, Arial, sans-serif;
+		width:35%;
+		/*margin:0 auto;
+		padding-top:20px;*/
+            }
+		.mainOutercontainer{
+		align-items: center;
+		    display: flex;
+		    height: 100%;
+		    justify-content: center;
+		    width: 100%;
+		}
+            .first_title{
+                text-align: center;
+                margin-left:-10px; 
+                color: #393939; 
+                font-size: 26px;
+                margin-top:10px;
+            }
+            .second-title{
+                text-align: center;
+                margin-left:-25px;
+                color: #666;
+                font-size: 18px;
+            }
+            .underline {
+                border-bottom: 2px solid #999;
+                height: 1px;
+                margin: -10px auto 6px;
+                width: 100px;
+            }
+            .form-check-label{
+                color: #777;
+                font-size: 12px;
+                position: relative;
+                top: 2px;
+            }
+            .footer-text {
+                color: #000000;
+                margin-top: 15px;
+                font-size: 14px;
+                text-align: center;
+		margin-bottom: 0;
+            }
+            .sign-up {
+                color: #288feb;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+<div class="mainOutercontainer">
+        <div class="maincontainer">
+            <center><img src="https://s3-ap-southeast-1.amazonaws.com/realbooksimage/realbookslogo_172x129.png" class="realBooks_logo"></center>
+            <!--<p class="first_title">Online Accounting Software</p>
+            <div class="underline"></div>
+            <p class="second-title">Log In to access RealBooks</p>-->
+
+            <form action="https://test.realbooks.in/AMS-war/Std_Web_Login" method="post" id="login" style="text-align:center;color:#424242;">
+                <table style="width:75%;margin: 20px auto 0;">
+                    <tr class="logFieldTr">
+                        <td style="width:100%;">
+                            <input type="text" name="domain" id="domain" class="commonFieldLogin accountIcon" placeholder="Account Name"/>
+                        </td>
+                    </tr>
+                    <tr class="logFieldTr">
+                        <td style="width:100%;">
+                            <input type="text" name="uname" id="uname" class="commonFieldLogin userIcon" placeholder="User Name"/>
+                        </td>
+                    </tr>
+                    <tr class="logFieldTr">
+                        <td style="width:100%;">
+                            <input type="password" name="password" id="password" class="commonFieldLogin passwrdIcon" placeholder="Password"/>
+                        </td>
+                    </tr>
+                </table>
+                <table style="display:none;width: 75%; margin: 0px auto;" id="catchaTable">
+                    <tr id="catchaTr">
+                        <td width="100%" align="center">
+                            <div class="captcha"></div>
+                            <img src="https://s3-ap-southeast-1.amazonaws.com/realbooksimage/captcha_fonts/refresh-01.png" class="refreshCaptcha"/>
+                            <input type="text" class="commonFieldLogin_captcha" value="" id="captchaInput" style="width:100%;  margin-top: 22px;" autocomplete="off"/>
+                            <div class="verifyCode"></div>
+                            <input type="hidden" name="is_captcha_validate" id="captcha_Validated">
+                            <input type="hidden" name="is_manual_logout" id="manualInvalidate">
+                        </td>
+
+                    </tr>
+                </table>
+                <table style="width:75%;margin:0 auto 18px;">
+                    <tr class="logFieldTxtTr">
+                        <td style="width:50%;text-align:left;vertical-align:bottom;">
+                            <label class="container fieldText smallFieldText remlabel"><span class="form-check-label">Keep me signed in</span>
+                                <input type="checkbox" class="commonFieldChk" id="remember_me" name="rem" style="cursor: pointer;" checked="checked">
+                                <span class="checkmark"></span>
+                            </label>
+                            <!--<input type="checkbox" style="cursor: pointer;" name="rem" id="remember_me" class="commonFieldChk">
+                            <label for="remember_me" class="form-check-label">Keep me signed in</label>	-->
+                        </td>
+                        <td style="width:50%;text-align:right;vertical-align:bottom;">
+                            <label class="fieldText forgotPass smallFieldText">Forgot Your Password?</label>
+                        </td>
+                    </tr>
+                </table>
+                <div class="login_btn_holder">
+
+                    <input class="login" type="button" name="submit" id="buttonSave" value="Login" onclick="return submitlogin()"/>
+                </div>
+                <div id="error_msg_login" class="error_msg_login"></div>
+            </form>
+            <div><p class="footer-text">New to Realbooks?<span class="sign-up" onclick="joinusClick()"> Join us now</span></p></div>
+            <form id="compSelectionForm" action="https://test.realbooks.in/AMS-war/Acc_Company_Selection.jsp" method="post" target="_parent" style="position:absolute;">
+                <input type = "hidden" name="username" id="username" value="">
+                <input type = "hidden" name="usrEmail" id="usrEmail" value="">
+                <input type = "hidden" name="domain" id="recdomain" value="">
+                <input type = "hidden" name="from_web" id="from_web" value="">
+                <input type = "hidden" name="webUrl" id="webUrl" value="">
+            </form>
+        </div>
+</div>
+    </body>
+</html>

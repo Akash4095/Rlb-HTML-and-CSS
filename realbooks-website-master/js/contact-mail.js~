@@ -1,0 +1,24 @@
+var name;
+var email;
+var phone;
+var text;
+$(document).ready(function(){
+	$('#contactSuccess').hide();
+	$('#contactForm').show('fast');
+	$('#contactSubmit').click(function(){
+		if ($('#name').val().length !== 0 && $('#email').val().length !== 0 && $('#phone').val().length !== 0) {
+            name = $('#name').val();
+            text = $('#text').val();
+            email = $('#email').val();
+            phone = $('#phone').val();
+		    $.ajax({
+	            type: "POST",
+	            url: "contact-post.php",
+	            data: ({ "name": name, "email": email, "phone": phone, "text": text }),
+	        });
+	         $('#contactForm').hide('fast');
+
+            $('#contactSuccess').show(300);
+	    }
+	});
+});
